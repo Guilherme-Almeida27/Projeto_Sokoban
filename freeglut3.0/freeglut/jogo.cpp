@@ -96,23 +96,22 @@ void reiniciaLevel(){
 // -----------------------------Funções de logica do jogo-----------------------------
 
 // Função para verificar se é possível mover o jogador para a posição (x, y)
-static int celulaLivre(int x, int y){
+int celulaLivre(int x, int y){
     // Verifica se as coordenadas estão dentro dos limites do mapa
     if(y < 0 || y >= MAP_WIDTH || x < 0 || x >= MAP_HEIGHT) {
         return 0; // Fora dos limites
     }
     // Verifica se a célula é piso ou lixeira
-    if(nivel.mapaAtual[x][y] == PISO ||
-       nivel.mapaAtual[x][y] == LIXEIRA_PAPEL || nivel.mapaAtual[x][y] == LIXEIRA_PLASTICO) {
+    if(nivel.mapaAtual[x][y] == PISO || indiceLixeira(x, y) != -1) {
         return 1; // Célula livre
     }
     return 0; // Célula ocupada
 }
 
 // Função para retornar o índice do bloco em nivel.blocos[] 
-static int indiceBloco(int x, int y) {
+int indiceBloco(int x, int y) {
     for(int i = 0; i < nivel.numBlocos; i++) {
-        if(nivel.blocos[i].x == y && nivel.blocos[i].y == x) {
+        if(nivel.blocos[i].x == x && nivel.blocos[i].y == y) {
             return i; // Retorna o índice do bloco encontrado
         }
     }
@@ -120,9 +119,9 @@ static int indiceBloco(int x, int y) {
 }
 
 // Função para retornar o índice da lixeira em nivel.lixeiras[]
-static int indiceLixeira(int x, int y) {
+int indiceLixeira(int x, int y) {
     for(int i = 0; i < nivel.numLixeiras; i++) {
-        if(nivel.lixeiras[i].x == y && nivel.lixeiras[i].y == x) {
+        if(nivel.lixeiras[i].x == x && nivel.lixeiras[i].y == y) {
             return i; // Retorna o índice da lixeira encontrada
         }
     }
@@ -130,9 +129,9 @@ static int indiceLixeira(int x, int y) {
 }
 
 // Move o bloco b em (dx, dy) se possível
-static int moveBloco(int b, int dx, int dy) {
-    int novox = nivel.blocos[b].x += dx;
-    int novoy = nivel.blocos[b].y += dy;
+int moveBloco(int b, int dx, int dy) {
+    int novox = nivel.blocos[b].x + dx;
+    int novoy = nivel.blocos[b].y + dy;
 
     // Verifica limites e se não é parede
     if(novox < 0 || novox >= MAP_WIDTH || novoy < 0 || novoy >= MAP_HEIGHT) {
@@ -147,23 +146,11 @@ static int moveBloco(int b, int dx, int dy) {
         return 0; // Não pode mover para uma posição já ocupada por outro bloco
     }
 
-    // Se for lixeira, verifica tipo compatível
-    int lixeiraIndex = indiceLixeira(novox, novoy);
-    if(lixeiraIndex != -1) {
-        if(nivel.blocos[b].tipo == BLOCO_PAPEL && nivel.lixeiras[lixeiraIndex].tipo != LIXEIRA_PAPEL) {
-            return 0; // Não pode mover para lixeira de tipo diferente
-        }
-        if(nivel.blocos[b].tipo == BLOCO_PLASTICO && nivel.lixeiras[lixeiraIndex].tipo != LIXEIRA_PLASTICO) {
-            return 0; // Não pode mover para lixeira de tipo diferente
-        }
-    }
+     // Remove o bloco da posição antiga no mapaAtual
+    nivel.mapaAtual[nivel.blocos[b].x][nivel.blocos[b].y] = PISO; // Marca a posição antiga como piso
     // Move o bloco para a nova posição
     nivel.blocos[b].x = novox;
     nivel.blocos[b].y = novoy;
-    // Atualiza o mapaAtual para refletir a nova posição do bloco
-    nivel.mapaAtual[nivel.blocos[b].x][nivel.blocos[b].y] = nivel.blocos[b].tipo;
-    // Remove o bloco da posição antiga no mapaAtual
-    nivel.mapaAtual[nivel.blocos[b].x - dx][nivel.blocos[b].y - dy] = PISO; // Marca a posição antiga como piso
     return 1; // Movimento bem-sucedido
 }
 
@@ -178,7 +165,6 @@ void movePlayer(int dx, int dy) {
         return; // Não pode mover o jogador
     }
     // Verifica se há um bloco na nova posição do jogador
-    printf("Chamada: indice_bloco_em(novaY=%d, novaX=%d)\n", novoY, novoX);
     int blocoIndex = indiceBloco(novoX, novoY);
     if(blocoIndex >= 0){
         // Tenta empurrar: ver a celula adiante
@@ -188,14 +174,7 @@ void movePlayer(int dx, int dy) {
 
         // Certifica-se de que não há outro bloco na célula de frente
         if(indiceBloco(frenteX, frenteY) != -1) return;
-
-        // Se a frente for lixeira, só empurre se o tipo combinar ou se for piso mesmo assim (permite mover)
-        int lixeiraIndex = indiceLixeira(frenteX, frenteY);
-        if(lixeiraIndex != -1) {
-            // Se o bloco não combina com a lixeira, não pode empurrar
-            if(nivel.blocos[blocoIndex].tipo != nivel.lixeiras[lixeiraIndex].tipo) return;
-        }
-
+        
 
         // Empurra o bloco
         moveBloco(blocoIndex, dx, dy);

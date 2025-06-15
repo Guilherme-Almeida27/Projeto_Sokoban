@@ -48,8 +48,10 @@ void reiniciaLevel(); // Reinicia o nível
 void movePlayer(int dx, int dy); // Move o jogador na direção especificada
 int checkVitoria(); // Verifica se o jogador venceu o nível
 void MapaInicial(); // Cria o mapa inicial do nível
-static int indiceBloco(int x, int y); // Retorna o índice do bloco na lista de blocos
-static int indiceLixeira(int x, int y); // Retorna o índice da lixeira na lista de lixeiras
+int indiceBloco(int x, int y); // Retorna o índice do bloco na lista de blocos
+int indiceLixeira(int x, int y); // Retorna o índice da lixeira na lista de lixeiras
+int celulaLivre(int x, int y); // Verifica se a célula (x, y) está livre
+int moveBloco(int b, int dx, int dy); // Move o bloco b na direção especificada
 //... Outras funções relacionadas ao jogo podem ser adicionadas aqui (eu num sei)(;-;)
 
 #endif // JOGO_H

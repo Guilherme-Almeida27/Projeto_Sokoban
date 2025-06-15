@@ -83,6 +83,27 @@ void desenhaTexto(const char* texto, int x, int y) {
     BitmapText(texto, x, y, GLUT_BITMAP_HELVETICA_18); // Desenha o texto na posição especificada
 }
 
+
+// Adicione esta função auxiliar para desenhar um bloco "entregue"
+void desenhaBlocoEntregue(int x, int y, int tipo) {
+    // Exemplo: desenha um bloco menor e com cor diferente
+    float margem = 0.2f; // Margem para deixar o bloco menor
+    if(tipo == BLOCO_PAPEL)
+        glColor3f(0.7f, 0.7f, 1.0f); // Azul claro para papel entregue
+    else if(tipo == BLOCO_PLASTICO)
+        glColor3f(1.0f, 0.7f, 0.7f); // Vermelho claro para plástico entregue
+    else
+        glColor3f(0.7f, 0.7f, 0.7f); // Cinza claro para outros
+
+    glBegin(GL_QUADS);
+        glVertex2f(x + margem, y + margem);
+        glVertex2f(x + 1 - margem, y + margem);
+        glVertex2f(x + 1 - margem, y + 1 - margem);
+        glVertex2f(x + margem, y + 1 - margem);
+    glEnd();
+}
+
+
 // Função para desenhar a cena(mapa inteiro + blocos + lixeiras + jogador)
 void desenhaCena() {
     glClear(GL_COLOR_BUFFER_BIT); // Limpa o buffer de cor
@@ -109,9 +130,21 @@ void desenhaCena() {
         }
     }
 
-    // Desenha blocos, segundo sua posição em nivel.blocos[]
+    // Desenha blocos, erificando se estão sobre a lixeira correta
     for(int i = 0; i < nivel.numBlocos; i++) {
-        desenhaCelula(nivel.blocos[i].x, nivel.blocos[i].y, nivel.blocos[i].tipo);
+        int x = nivel.blocos[i].x;
+        int y = nivel.blocos[i].y;
+        int tipo = nivel.blocos[i].tipo;
+        int lixeiraIndex = indiceLixeira(x, y);
+        if(lixeiraIndex != -1 && 
+            nivel.lixeiras[lixeiraIndex].tipo == (tipo == BLOCO_PAPEL ? LIXEIRA_PAPEL : LIXEIRA_PLASTICO)) {
+            // Se o bloco está na lixeira correta, desenha como entregue
+            desenhaBlocoEntregue(x, y, tipo);
+        } else {
+            // Caso contrário, desenha o bloco normalmente
+            desenhaCelula(x, y, tipo);
+            }
+            
     }
 
     // Desenha o jogador

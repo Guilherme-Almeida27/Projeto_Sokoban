@@ -26,7 +26,7 @@ void menu_principal(int option) {
 
 // Cria menu de contexto (botão direito)
 void criaMenu() {
-    int menu = glutCreateMenu(menu_principal);
+    glutCreateMenu(menu_principal);
     glutAddMenuEntry("Iniciar Jogo", 1);
     glutAddMenuEntry("Sair", 2);
     glutAttachMenu(GLUT_RIGHT_BUTTON); // Anexa o menu ao botão direito do mouse
@@ -131,6 +131,7 @@ int main(int argc, char** argv){
     glutKeyboardFunc(teclado); // Define a função de teclado
     glutSpecialFunc(tecladoEspecial); // Define a função de teclas especiais
     glutReshapeFunc(redimensionaJanela); // Define a função de redimensionamento da janela
+
 
     criaMenu(); // Cria o menu de contexto
 
