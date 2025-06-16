@@ -3,6 +3,11 @@
 #include "jogo.h"
 #include "util.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+GLuint texturaParede = 0;
+
+
 // Dimensões da janela em pixels
 static int windowWidth = 800; 
 static int windowHeight = 600; 
@@ -26,6 +31,22 @@ void initRender(int width, int height) {
 
 }
 
+// Função para carregar a textura da parede
+void carregaTexturaParede() {
+    int largura, altura, canais;
+    unsigned char* dados = stbi_load("img/brick_wall.png", &largura, &altura, &canais, 0);
+    if(dados){
+        glGenTextures(1, &texturaParede);
+        glBindTexture(GL_TEXTURE_2D, texturaParede);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, largura, altura, 0, canais == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, dados);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        stbi_image_free(dados);
+    } else {
+        printf("Falha ao carregar textura da parede!\n");
+    }
+}
+
 // Função de callback do GLUT para redimensionar a janela
 void redimensionaJanela(int width, int height) {
     initRender(width, height);
@@ -34,12 +55,25 @@ void redimensionaJanela(int width, int height) {
 
 // Função para desenhar uma célula do mapa, com cor correspondente ao tipo(Depois sera modificado para aplicar texturas)
 void desenhaCelula(int x, int y, int tipo){
+
+    if(tipo == PAREDE && texturaParede) {// Se for parede e textura carregada, desenha com textura
+        glEnable(GL_TEXTURE_2D); // Habilita o uso de texturas
+        glBindTexture(GL_TEXTURE_2D, texturaParede); // Vincula a textura da parede
+        glColor3f(1,1,1); // Garante cor branca para não alterar a textura
+        // Desenha um quadrado com a textura da parede
+        glBegin(GL_QUADS);
+            glTexCoord2f(0.0f, 0.0f); glVertex2f(x, y);
+            glTexCoord2f(1.0f, 0.0f); glVertex2f(x + 1, y);
+            glTexCoord2f(1.0f, 1.0f); glVertex2f(x + 1, y + 1);
+            glTexCoord2f(0.0f, 1.0f); glVertex2f(x, y + 1);
+        glEnd();
+        glDisable(GL_TEXTURE_2D); // Desabilita o uso de texturas
+        return;
+    }
+
     switch(tipo){
         case PISO:
             glColor3f(0.8f, 0.8f, 0.8f); // Cor cinza para piso
-            break;
-        case PAREDE:
-            glColor3f(0.5f, 0.5f, 0.5f); // Cor cinza escuro para parede
             break;
         case BLOCO_PAPEL:
             glColor3f(1.0f, 1.0f, 1.0f); // Cor branca para bloco de papel
@@ -88,9 +122,9 @@ void desenhaTexto(const char* texto, int x, int y) {
 void desenhaBlocoEntregue(int x, int y, int tipo) {
     // Exemplo: desenha um bloco menor e com cor diferente
     float margem = 0.2f; // Margem para deixar o bloco menor
-    if(tipo == BLOCO_PAPEL)
+    if(tipo == PAPEL)
         glColor3f(0.7f, 0.7f, 1.0f); // Azul claro para papel entregue
-    else if(tipo == BLOCO_PLASTICO)
+    else if(tipo == PLASTICO)
         glColor3f(1.0f, 0.7f, 0.7f); // Vermelho claro para plástico entregue
     else
         glColor3f(0.7f, 0.7f, 0.7f); // Cinza claro para outros
@@ -129,24 +163,24 @@ void desenhaCena() {
             }
         }
     }
-
-    // Desenha blocos, erificando se estão sobre a lixeira correta
+    // Desenha blocos, verificando se estão sobre a lixeira correta
     for(int i = 0; i < nivel.numBlocos; i++) {
         int x = nivel.blocos[i].x;
         int y = nivel.blocos[i].y;
         int tipo = nivel.blocos[i].tipo;
         int lixeiraIndex = indiceLixeira(x, y);
-        if(lixeiraIndex != -1 && 
-            nivel.lixeiras[lixeiraIndex].tipo == (tipo == BLOCO_PAPEL ? LIXEIRA_PAPEL : LIXEIRA_PLASTICO)) {
-            // Se o bloco está na lixeira correta, desenha como entregue
-            desenhaBlocoEntregue(x, y, tipo);
+       if(lixeiraIndex != -1 && nivel.lixeiras[lixeiraIndex].tipo == tipo) {
+        desenhaBlocoEntregue(x, y, tipo);
         } else {
-            // Caso contrário, desenha o bloco normalmente
-            desenhaCelula(x, y, tipo);
-            }
-            
+            // Desenha o bloco normalmente (use as cores antigas para visualização)
+            if(tipo == PAPEL)
+                desenhaCelula(x, y, BLOCO_PAPEL);
+            else if(tipo == PLASTICO)
+                desenhaCelula(x, y, BLOCO_PLASTICO);
+            else
+                desenhaCelula(x, y, PISO);
+        }
     }
-
     // Desenha o jogador
     desenhaPlayer(nivel.jogador.x, nivel.jogador.y);
 }

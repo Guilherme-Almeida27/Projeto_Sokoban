@@ -14,6 +14,9 @@
 #define LIXEIRA_PAPEL 4
 #define LIXEIRA_PLASTICO 5
 
+//Novos tipos simplificados para blocos e lixeiras
+#define PAPEL 2
+#define PLASTICO 3
 
 typedef struct { 
     int x, y; // Posição do jogador no mapa

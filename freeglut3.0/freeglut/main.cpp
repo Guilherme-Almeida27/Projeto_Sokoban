@@ -89,9 +89,7 @@ void display(){
     glClear(GL_COLOR_BUFFER_BIT); // Limpa o buffer de cor
     if(estadoJogo == 0) {
         // Menu inicial simples(precisa se melhorado posteriormentte)
-        glColor3f(0.0f, 0.0f, 0.0f); // Cor preta para o texto
-        desenhaTexto("Menu Inicial", WINDOW_WIDTH / 2 - 50, WINDOW_HEIGHT / 2 + 20);
-        desenhaTexto("Clique com o botão direito para iniciar", WINDOW_WIDTH / 2 - 150, WINDOW_HEIGHT / 2);
+
     } 
     else if(estadoJogo == 1) {
         // Desenha a cena do jogo
@@ -124,6 +122,7 @@ int main(int argc, char** argv){
     //  Inicializa Level e renderização
     MapaInicial(); // Cria o mapa inicial do nível
     initRender(WINDOW_WIDTH, WINDOW_HEIGHT); // Inicializa a renderização
+    carregaTexturaParede(); // Carrega a textura da parede
     initLevel(); // Inicializa o nível
 
     // Callbacks do GLUT

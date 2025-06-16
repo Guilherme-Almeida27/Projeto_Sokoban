@@ -38,17 +38,31 @@ void initLevel(){
     for(int y = 0; y < MAP_HEIGHT; y++) {
         for(int x = 0; x < MAP_WIDTH; x++) {
             int cell = nivel.mapaAtual[x][y];
-            if(cell == BLOCO_PAPEL || cell == BLOCO_PLASTICO) {
+            if(cell == BLOCO_PAPEL) {
                 nivel.blocos[nivel.numBlocos].x = x;
                 nivel.blocos[nivel.numBlocos].y = y;
-                nivel.blocos[nivel.numBlocos].tipo = cell;
+                nivel.blocos[nivel.numBlocos].tipo = PAPEL;
                 nivel.numBlocos++;
                 nivel.mapaAtual[x][y] = PISO; // Remove o bloco do mapa
             }
-            else if(cell == LIXEIRA_PAPEL || cell == LIXEIRA_PLASTICO) {
+            else if(cell == BLOCO_PLASTICO) {
+                nivel.blocos[nivel.numBlocos].x = x;
+                nivel.blocos[nivel.numBlocos].y = y;
+                nivel.blocos[nivel.numBlocos].tipo = PLASTICO;
+                nivel.numBlocos++;
+                nivel.mapaAtual[x][y] = PISO; // Remove o bloco do mapa
+            }
+            else if(cell == LIXEIRA_PAPEL) {
                 nivel.lixeiras[nivel.numLixeiras].x = x;
                 nivel.lixeiras[nivel.numLixeiras].y = y;
-                nivel.lixeiras[nivel.numLixeiras].tipo = cell;
+                nivel.lixeiras[nivel.numLixeiras].tipo = PAPEL;
+                nivel.numLixeiras++;
+                nivel.mapaAtual[x][y] = PISO; // Remove a lixeira do mapa
+            }
+            else if(cell == LIXEIRA_PLASTICO) {
+                nivel.lixeiras[nivel.numLixeiras].x = x;
+                nivel.lixeiras[nivel.numLixeiras].y = y;
+                nivel.lixeiras[nivel.numLixeiras].tipo = PLASTICO;
                 nivel.numLixeiras++;
                 nivel.mapaAtual[x][y] = PISO; // Remove a lixeira do mapa
             }
@@ -199,10 +213,8 @@ int checkVitoria() {
         int blocoY = nivel.blocos[i].y;
         int lixeiraIndex = indiceLixeira(blocoX, blocoY);
         
-        // Se o bloco não está em uma lixeira, o jogador não venceu
-        if(lixeiraIndex == -1 || 
-           (nivel.blocos[i].tipo == BLOCO_PAPEL && nivel.lixeiras[lixeiraIndex].tipo != LIXEIRA_PAPEL) ||
-           (nivel.blocos[i].tipo == BLOCO_PLASTICO && nivel.lixeiras[lixeiraIndex].tipo != LIXEIRA_PLASTICO)) {
+        // Se o bloco não está em uma lixeira ou o tipo não bate, não venceu
+        if(lixeiraIndex == -1 || nivel.blocos[i].tipo != nivel.lixeiras[lixeiraIndex].tipo) {
             return 0; // Não venceu
         }
     }
