@@ -9,6 +9,7 @@ const int WINDOW_HEIGHT = 600; // Altura da janela
 
 // Estado do jogo
 int estadoJogo = 0; // 0 = menu inicial, 1 = jogando, 2 = vitoria
+extern int nivelAtual; // Nível atual do jogo
 
 // Menu GLUT
 void menu_principal(int option) {
@@ -94,7 +95,7 @@ void display(){
     else if(estadoJogo == 1) {
         // Desenha a cena do jogo
         desenhaCena(); // Desenha o mapa, blocos e jogador
-        if(checkVitoria()) {
+        if(checkVitoria() == 2) {
             estadoJogo = 2; // Muda para estado de vitória
         }
     }
@@ -120,10 +121,11 @@ int main(int argc, char** argv){
 
 
     //  Inicializa Level e renderização
-    MapaInicial(); // Cria o mapa inicial do nível
+    MapaInicial(1); // Cria o mapa inicial do nível
     initRender(WINDOW_WIDTH, WINDOW_HEIGHT); // Inicializa a renderização
     carregaTexturaParede(); // Carrega a textura da parede
-    carregaTexturasPlayer(); // Carrega as texturas do jogador
+    carregaTexturaPlayer(); // Carrega as texturas do jogador
+    carregaTexturaPiso(); // Carrega a textura do piso
     initLevel(); // Inicializa o nível
 
     // Callbacks do GLUT

@@ -6,6 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 GLuint texturaParede = 0; // Textura para as paredes
+GLuint texturaPiso = 0; // Textura para o piso 
 
 // Texturas do jogador: [direção][frame]: 0=andando_01, 1=parado, 2=andando_02
 GLuint texturaPlayer[4][3] = {0}; // [direção][frame]: 0=andando_01, 1=parado, 2=andando_02
@@ -39,7 +40,7 @@ void initRender(int width, int height) {
 // Função para carregar a textura da parede
 void carregaTexturaParede() {
     int largura, altura, canais;
-    unsigned char* dados = stbi_load("img/brick_wall.png", &largura, &altura, &canais, 0);
+    unsigned char* dados = stbi_load("img/Arvore_Grande_01.png", &largura, &altura, &canais, 0);
     if(dados){
         glGenTextures(1, &texturaParede);
         glBindTexture(GL_TEXTURE_2D, texturaParede);
@@ -49,6 +50,21 @@ void carregaTexturaParede() {
         stbi_image_free(dados);
     } else {
         printf("Falha ao carregar textura da parede!\n");
+    }
+}
+
+void carregaTexturaPiso() {
+    int largura, altura, canais;
+    unsigned char* dados = stbi_load("img/Grama_Simples_01.png", &largura, &altura, &canais, 0);
+    if (dados) {
+        glGenTextures(1, &texturaPiso);
+        glBindTexture(GL_TEXTURE_2D, texturaPiso);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, largura, altura, 0, GL_RGBA, GL_UNSIGNED_BYTE, dados);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        stbi_image_free(dados);
+    } else {
+        printf("Falha ao carregar textura do piso!\n");
     }
 }
 
@@ -62,9 +78,11 @@ void redimensionaJanela(int width, int height) {
 void desenhaCelula(int x, int y, int tipo){
 
     if(tipo == PAREDE && texturaParede) {// Se for parede e textura carregada, desenha com textura
+        glEnable(GL_BLEND); // Habilita o blending para transparência
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Configura o modo de blending
         glEnable(GL_TEXTURE_2D); // Habilita o uso de texturas
         glBindTexture(GL_TEXTURE_2D, texturaParede); // Vincula a textura da parede
-        glColor3f(1,1,1); // Garante cor branca para não alterar a textura
+        glColor4f(1,1,1,1); // Garante cor branca para não alterar a textura
         // Desenha um quadrado com a textura da parede
         glBegin(GL_QUADS);
             glTexCoord2f(0.0f, 0.0f); glVertex2f(x, y);
@@ -73,13 +91,22 @@ void desenhaCelula(int x, int y, int tipo){
             glTexCoord2f(0.0f, 1.0f); glVertex2f(x, y + 1);
         glEnd();
         glDisable(GL_TEXTURE_2D); // Desabilita o uso de texturas
+        glDisable(GL_BLEND); // Desabilita o blending
+        return;
+    } else if (tipo == PISO && texturaPiso) { // Se for piso e textura carregada
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texturaPiso);
+        glColor3f(1.0f, 1.0f, 1.0f); // Cor branca para não tingir a textura
+        glBegin(GL_QUADS);
+            glTexCoord2f(0.0f, 0.0f); glVertex2f(x, y);
+            glTexCoord2f(1.0f, 0.0f); glVertex2f(x + cellWidth, y);
+            glTexCoord2f(1.0f, 1.0f); glVertex2f(x + cellWidth, y + cellHeight);
+            glTexCoord2f(0.0f, 1.0f); glVertex2f(x, y + cellHeight);
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
         return;
     }
-
     switch(tipo){
-        case PISO:
-            glColor3f(0.8f, 0.8f, 0.8f); // Cor cinza para piso
-            break;
         case BLOCO_PAPEL:
             glColor3f(1.0f, 1.0f, 1.0f); // Cor branca para bloco de papel
             break;
@@ -156,15 +183,19 @@ void desenhaBlocoEntregue(int x, int y, int tipo) {
 void desenhaCena() {
     glClear(GL_COLOR_BUFFER_BIT); // Limpa o buffer de cor
 
+    // Desenha o piso base em todas as células primeiro
+    for(int i = 0; i < MAP_WIDTH; i++){
+        for(int j = 0; j < MAP_HEIGHT; j++){
+            desenhaCelula(i, j, PISO); // Desenha a textura do piso em todas as células
+        }
+    }
+
     //  Desenha todas as paredes, pisos e lixeiras a partir do mapaInicial
     for(int i = 0; i < MAP_WIDTH; i++){
         for(int j = 0; j < MAP_HEIGHT; j++){
             int cell = nivel.mapaInicial[i][j];
             if(cell == PAREDE){
                 desenhaCelula(i, j, PAREDE); // Desenha paredes
-            }
-            else if(cell == PISO){
-                desenhaCelula(i, j, PISO); // Desenha pisos
             }
             else if(cell == LIXEIRA_PAPEL){
                 desenhaCelula(i, j, LIXEIRA_PAPEL); // Desenha lixeiras de papel
@@ -186,13 +217,11 @@ void desenhaCena() {
        if(lixeiraIndex != -1 && nivel.lixeiras[lixeiraIndex].tipo == tipo) {
         desenhaBlocoEntregue(x, y, tipo);
         } else {
-            // Desenha o bloco normalmente (use as cores antigas para visualização)
+            // Desenha o bloco normalmente 
             if(tipo == PAPEL)
                 desenhaCelula(x, y, BLOCO_PAPEL);
             else if(tipo == PLASTICO)
                 desenhaCelula(x, y, BLOCO_PLASTICO);
-            else
-                desenhaCelula(x, y, PISO);
         }
     }
     // Desenha o jogador
@@ -200,7 +229,7 @@ void desenhaCena() {
 }
 
 // Função para carregar as texturas do jogador
-void carregaTexturasPlayer() {
+void carregaTexturaPlayer() {
     const char* nomes[4][3] = {
         {"img/Sprites_Player/Andando_Atras_01.png", "img/Sprites_Player/Parado_Atras.png", "img/Sprites_Player/Andando_Atras_02.png"},
         {"img/Sprites_Player/Andando_Frente_01.png", "img/Sprites_Player/Parado_Frente.png", "img/Sprites_Player/Andando_Frente_02.png"},

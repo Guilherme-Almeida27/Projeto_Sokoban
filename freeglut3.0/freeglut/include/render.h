@@ -10,7 +10,8 @@ void desenhaPlayer(int x, int y); // Desenha o jogador
 void desenhaTexto(const char* texto, int x, int y); // Desenha um texto na tela
 void desenhaBlocoEntregue(int x, int y, int tipo); // Desenha um bloco que foi entregue na lixeira correta
 void carregaTexturaParede(); // Carrega a textura para as paredes
-void carregaTexturasPlayer(); // Carrega as texturas do jogador
+void carregaTexturaPlayer(); // Carrega as texturas do jogador
+void carregaTexturaPiso(); // Carrega a textura do piso
 //... Outras funções de renderização podem ser adicionadas aqui
 
 #endif // RENDER_H

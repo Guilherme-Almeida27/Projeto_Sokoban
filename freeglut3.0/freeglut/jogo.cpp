@@ -10,26 +10,54 @@ extern int direcaoPlayer; // 0=cima, 1=baixo, 2=esquerda, 3=direita
 extern int framePlayer; // 0=andando_01, 1=parado, 2=andando_02
 extern int contadorAnim; // Contador de animação para o jogador
 
+// Variáveis globais para controle de níveis
+static int nivelAtual = 1;
+static const int totalNiveis = 3; 
+
 // ---------------------------Funções de configuração inicial---------------------------
 
 
 // Inicializa o nível com o mapa inicial
 /* 0 = PISO , 1 = PAREDE, 2 = BLOCO_PAPEL, 3 = BLOCO_PLASTICO 4 = LIXEIRA_PAPEL, 5 = LIXEIRA_PLASTICO */
-void MapaInicial() {    
- 
-    int tmp[MAP_WIDTH][MAP_HEIGHT] = {
-        {1,1,1,1,1,1,1,1,1,1},
-        {1,0,0,0,0,0,0,0,0,1},
-        {1,0,2,0,0,0,3,0,0,1},
-        {1,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,4,0,0,0,0,1},
-        {1,0,0,0,5,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,0,0,0,0,0,1},
-        {1,1,1,1,1,1,1,1,1,1}
-    };
-    memcpy(nivel.mapaInicial, tmp, sizeof(tmp));
+void MapaInicial(int indiceNivel) {    
+    if(indiceNivel == 1){ // Nível 1
+        int tmp[MAP_WIDTH][MAP_HEIGHT] = {
+            {1,1,1,1,1,1,0},
+            {1,9,0,0,0,1,0},
+            {1,0,0,3,2,1,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,4,5,0,1},
+            {1,1,0,0,0,0,1},
+            {0,1,0,0,0,0,1},
+            {0,1,1,1,1,1,1}
+        };
+        memcpy(nivel.mapaInicial, tmp, sizeof(tmp));
+    }
+    else if(indiceNivel == 2){ // Nível 2
+        int tmp[MAP_WIDTH][MAP_HEIGHT] = {
+            {1,1,1,1,1,1,1,1,0},
+            {1,9,0,0,0,0,0,1,0},
+            {1,0,0,2,0,0,0,1,1},
+            {1,0,0,3,0,0,5,4,1},
+            {1,0,0,0,0,0,0,0,1},
+            {1,1,1,1,1,1,1,1,1}
+        };
+
+        memcpy(nivel.mapaInicial, tmp, sizeof(tmp));
+    }
+    else if(indiceNivel == 3){ // Nível 3
+        int tmp[MAP_WIDTH][MAP_HEIGHT] = {
+            {0,1,1,1,1,0},
+            {1,1,0,0,1,0},
+            {1,0,3,0,1,0},
+            {1,5,1,4,1,0},
+            {1,0,2,0,1,1},
+            {1,0,0,0,0,1},
+            {1,1,0,0,9,1},
+            {0,1,1,1,1,1}
+        };
+        memcpy(nivel.mapaInicial, tmp, sizeof(tmp));
+    }
 }
 
 // Inicializa ou reseta o nível: mapaAtual = mapaInicial, posiciona player, blocos e lixeiras 
@@ -70,37 +98,21 @@ void initLevel(){
                 nivel.numLixeiras++;
                 nivel.mapaAtual[x][y] = PISO; // Remove a lixeira do mapa
             }
+            else if(cell == JOGADOR) {
+                // Posiciona o jogador no mapa
+                nivel.jogador.x = x;
+                nivel.jogador.y = y;
+                // Remove o jogador do mapaAtual
+                nivel.mapaAtual[x][y] = PISO; 
+            }
             else if(cell == PAREDE || cell == PISO) {
                 // Apenas paredes e pisos permanecem no mapaAtual
                 continue;
-            }
+            }  
             else {
                 // Se for um bloco ou lixeira desconhecido, trata como piso
                 nivel.mapaAtual[x][y] = PISO;
             }
-        }
-    }
-    // Posiciona o jogador no promepio espaço vazio encontrado(pode se ajustado, no caso aqui está em (1,1) se for PISO)
-    if(nivel.mapaAtual[1][1] == PISO){
-        nivel.jogador.x = 1;
-        nivel.jogador.y = 1;
-    } else {
-        // Se (1,1) não for piso, procura o proximo espaço vazio
-        nivel.jogador.x = -1; // Marca como não encontrado
-        nivel.jogador.y = -1; // Marca como não encontrado
-        for(int y = 0; y < MAP_HEIGHT; y++) {
-            for(int x = 0; x < MAP_WIDTH; x++) {
-                if(nivel.mapaAtual[x][y] == PISO) {
-                    nivel.jogador.x = x;
-                    nivel.jogador.y = y;
-                    goto Encontrado; // Sai do loop quando encontra o primeiro piso livre
-                }
-            }
-        }
-        Encontrado:
-        // Se não encontrou nenhum piso, deixa o jogador em (-1,-1) indicando que não foi posicionado
-        if(nivel.jogador.x == -1 && nivel.jogador.y == -1) {
-            printf("Erro: Nenhum espaço vazio encontrado para posicionar o jogador.\n");
         }
     }
 }
@@ -237,5 +249,16 @@ int checkVitoria() {
             return 0; // Não venceu
         }
     }
-    return 1; // Venceu
+    // Se venceu, prepara próximo nível
+    nivelAtual++;
+    // Verifica se ainda há níveis disponíveis
+    if(nivelAtual <= totalNiveis) {
+        MapaInicial(nivelAtual); // Carrega o mapa inicial do próximo nível
+        initLevel(); // Reinicializa o nível com o novo mapa
+    }
+    // Não há mais níveis disponíveis
+    else {
+        return 2; // Indica que venceu o jogo
+    }
+    return 1; // Venceu o nível
 }

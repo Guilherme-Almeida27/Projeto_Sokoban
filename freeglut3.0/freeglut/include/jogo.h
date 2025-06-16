@@ -14,6 +14,8 @@
 #define LIXEIRA_PAPEL 4
 #define LIXEIRA_PLASTICO 5
 
+#define JOGADOR 9 
+
 //Novos tipos simplificados para blocos e lixeiras
 #define PAPEL 2
 #define PLASTICO 3
@@ -50,7 +52,7 @@ void initLevel(); // Inicializa o nível
 void reiniciaLevel(); // Reinicia o nível
 void movePlayer(int dx, int dy); // Move o jogador na direção especificada
 int checkVitoria(); // Verifica se o jogador venceu o nível
-void MapaInicial(); // Cria o mapa inicial do nível
+void MapaInicial(int indeceNivel); // Cria o mapa inicial do nível
 int indiceBloco(int x, int y); // Retorna o índice do bloco na lista de blocos
 int indiceLixeira(int x, int y); // Retorna o índice da lixeira na lista de lixeiras
 int celulaLivre(int x, int y); // Verifica se a célula (x, y) está livre
