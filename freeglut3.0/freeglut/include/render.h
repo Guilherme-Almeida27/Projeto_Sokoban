@@ -12,6 +12,7 @@ void desenhaBlocoEntregue(int x, int y, int tipo); // Desenha um bloco que foi e
 void carregaTexturaParede(); // Carrega a textura para as paredes
 void carregaTexturaPlayer(); // Carrega as texturas do jogador
 void carregaTexturaPiso(); // Carrega a textura do piso
+void carregaTexturaItens(); // Carrega as texturas dos itens (blocos e lixeiras)
 //... Outras funções de renderização podem ser adicionadas aqui
 
 #endif // RENDER_H

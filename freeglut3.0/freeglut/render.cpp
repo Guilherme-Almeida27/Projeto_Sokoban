@@ -7,6 +7,13 @@
 #include "stb_image.h"
 GLuint texturaParede = 0; // Textura para as paredes
 GLuint texturaPiso = 0; // Textura para o piso 
+GLuint texturaLixeiraPapelVazia = 0;
+GLuint texturaLixeiraPapelCheia = 0;
+GLuint texturaLixeiraPlasticoVazia = 0;
+GLuint texturaLixeiraPlasticoCheia = 0;
+GLuint texturaBlocoPapel = 0;
+GLuint texturaBlocoPlastico = 0;
+
 
 // Texturas do jogador: [direção][frame]: 0=andando_01, 1=parado, 2=andando_02
 GLuint texturaPlayer[4][3] = {0}; // [direção][frame]: 0=andando_01, 1=parado, 2=andando_02
@@ -53,6 +60,7 @@ void carregaTexturaParede() {
     }
 }
 
+// Função para carregar as texturas do piso
 void carregaTexturaPiso() {
     int largura, altura, canais;
     unsigned char* dados = stbi_load("img/Grama_Simples_01.png", &largura, &altura, &canais, 0);
@@ -68,6 +76,78 @@ void carregaTexturaPiso() {
     }
 }
 
+// Função para carregar as texturas dos itens (blocos e lixeiras)
+void carregaTexturaItens(){
+    int largura, altura, canais;
+    unsigned char* dados;
+
+    // Lixeira Papel Vazia
+    dados = stbi_load("img/Lixeiras/Lixeira_Papel_Vazia.png", &largura, &altura, &canais, 0);
+    if (dados) {
+        glGenTextures(1, &texturaLixeiraPapelVazia);
+        glBindTexture(GL_TEXTURE_2D, texturaLixeiraPapelVazia);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, largura, altura, 0, canais == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, dados);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        stbi_image_free(dados);
+    } else { printf("Falha ao carregar img/Lixeiras/Lixeira_Papel_Vazia.png\n"); }
+
+    // Lixeira Papel Cheia
+    dados = stbi_load("img/Lixeiras/Lixeira_Papel_Cheia.png", &largura, &altura, &canais, 0);
+    if (dados) {
+        glGenTextures(1, &texturaLixeiraPapelCheia);
+        glBindTexture(GL_TEXTURE_2D, texturaLixeiraPapelCheia);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, largura, altura, 0, canais == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, dados);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        stbi_image_free(dados);
+    } else { printf("Falha ao carregar img/Lixeiras/Lixeira_Papel_Cheia.png\n"); }
+
+    // Lixeira Plástico Vazia
+    dados = stbi_load("img/Lixeiras/Lixeira_Plastico_Vazia.png", &largura, &altura, &canais, 0);
+    if (dados) {
+        glGenTextures(1, &texturaLixeiraPlasticoVazia);
+        glBindTexture(GL_TEXTURE_2D, texturaLixeiraPlasticoVazia);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, largura, altura, 0, canais == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, dados);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        stbi_image_free(dados);
+    } else { printf("Falha ao carregar img/Lixeiras/Lixeira_Plastico_Vazia.png\n"); }
+
+    // Lixeira Plástico Cheia
+    dados = stbi_load("img/Lixeiras/Lixeira_Plastico_Cheia.png", &largura, &altura, &canais, 0);
+    if (dados) {
+        glGenTextures(1, &texturaLixeiraPlasticoCheia);
+        glBindTexture(GL_TEXTURE_2D, texturaLixeiraPlasticoCheia);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, largura, altura, 0, canais == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, dados);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        stbi_image_free(dados);
+    } else { printf("Falha ao carregar img/Lixeiras/Lixeira_Plastico_Cheia.png\n"); }
+
+    // Bloco Papel
+    dados = stbi_load("img/Lixos/Lixo_Papel.png", &largura, &altura, &canais, 0);
+    if (dados) {
+        glGenTextures(1, &texturaBlocoPapel);
+        glBindTexture(GL_TEXTURE_2D, texturaBlocoPapel);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, largura, altura, 0, canais == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, dados);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        stbi_image_free(dados);
+    } else { printf("Falha ao carregar img/Lixos/Lixo_Papel.png\n"); }
+
+    // Bloco Plástico
+    dados = stbi_load("img/Lixos/Lixo_Plastico_01.png", &largura, &altura, &canais, 0);
+    if (dados) {
+        glGenTextures(1, &texturaBlocoPlastico);
+        glBindTexture(GL_TEXTURE_2D, texturaBlocoPlastico);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, largura, altura, 0, canais == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, dados);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        stbi_image_free(dados);
+    } else { printf("Falha ao carregar img/Lixos/Lixo_Plastico.png\n"); }
+}
+
 // Função de callback do GLUT para redimensionar a janela
 void redimensionaJanela(int width, int height) {
     initRender(width, height);
@@ -76,54 +156,71 @@ void redimensionaJanela(int width, int height) {
 
 // Função para desenhar uma célula do mapa, com cor correspondente ao tipo(Depois sera modificado para aplicar texturas)
 void desenhaCelula(int x, int y, int tipo){
+    GLuint texturaParaUsar = 0;
+    bool usarBlend = false; // Controla se o blend deve ser ativado para esta célula
 
-    if(tipo == PAREDE && texturaParede) {// Se for parede e textura carregada, desenha com textura
-        glEnable(GL_BLEND); // Habilita o blending para transparência
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Configura o modo de blending
-        glEnable(GL_TEXTURE_2D); // Habilita o uso de texturas
-        glBindTexture(GL_TEXTURE_2D, texturaParede); // Vincula a textura da parede
-        glColor4f(1,1,1,1); // Garante cor branca para não alterar a textura
-        // Desenha um quadrado com a textura da parede
-        glBegin(GL_QUADS);
-            glTexCoord2f(0.0f, 0.0f); glVertex2f(x, y);
-            glTexCoord2f(1.0f, 0.0f); glVertex2f(x + 1, y);
-            glTexCoord2f(1.0f, 1.0f); glVertex2f(x + 1, y + 1);
-            glTexCoord2f(0.0f, 1.0f); glVertex2f(x, y + 1);
-        glEnd();
-        glDisable(GL_TEXTURE_2D); // Desabilita o uso de texturas
-        glDisable(GL_BLEND); // Desabilita o blending
-        return;
-    } else if (tipo == PISO && texturaPiso) { // Se for piso e textura carregada
+    if(tipo == PAREDE && texturaParede) {
+        texturaParaUsar = texturaParede;
+        usarBlend = true; // Árvore pode ter transparência
+    } else if (tipo == PISO && texturaPiso) {
+        texturaParaUsar = texturaPiso;
+    } else if (tipo == BLOCO_PAPEL && texturaBlocoPapel) {
+        texturaParaUsar = texturaBlocoPapel;
+        usarBlend = true; // Blocos podem ter transparência
+    } else if (tipo == BLOCO_PLASTICO && texturaBlocoPlastico) {
+        texturaParaUsar = texturaBlocoPlastico;
+        usarBlend = true; // Blocos podem ter transparência
+    } else if (tipo == LIXEIRA_PAPEL) {
+        usarBlend = true; // Lixeiras podem ter transparência
+        int idBloco = indiceBloco(x,y);
+        if(idBloco != -1 && nivel.blocos[idBloco].tipo == PAPEL && texturaLixeiraPapelCheia) {
+            texturaParaUsar = texturaLixeiraPapelCheia;
+        } else if (texturaLixeiraPapelVazia) {
+            texturaParaUsar = texturaLixeiraPapelVazia;
+        }
+    } else if (tipo == LIXEIRA_PLASTICO) {
+        usarBlend = true; // Lixeiras podem ter transparência
+        int idBloco = indiceBloco(x,y);
+        if(idBloco != -1 && nivel.blocos[idBloco].tipo == PLASTICO && texturaLixeiraPlasticoCheia) {
+            texturaParaUsar = texturaLixeiraPlasticoCheia;
+        } else if (texturaLixeiraPlasticoVazia) {
+            texturaParaUsar = texturaLixeiraPlasticoVazia;
+        }
+    }
+
+    if (texturaParaUsar) {
+        if (usarBlend) {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texturaPiso);
-        glColor3f(1.0f, 1.0f, 1.0f); // Cor branca para não tingir a textura
+        glBindTexture(GL_TEXTURE_2D, texturaParaUsar);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f); // Cor branca para não tingir a textura
+
         glBegin(GL_QUADS);
             glTexCoord2f(0.0f, 0.0f); glVertex2f(x, y);
             glTexCoord2f(1.0f, 0.0f); glVertex2f(x + cellWidth, y);
             glTexCoord2f(1.0f, 1.0f); glVertex2f(x + cellWidth, y + cellHeight);
             glTexCoord2f(0.0f, 1.0f); glVertex2f(x, y + cellHeight);
         glEnd();
+
         glDisable(GL_TEXTURE_2D);
+        if (usarBlend) {
+            glDisable(GL_BLEND);
+        }
         return;
     }
+
+    // Fallback para cores se as texturas não carregarem ou não forem definidas para o tipo
     switch(tipo){
-        case BLOCO_PAPEL:
-            glColor3f(1.0f, 1.0f, 1.0f); // Cor branca para bloco de papel
-            break;
-        case BLOCO_PLASTICO:
-            glColor3f(1.0f, 0.0f, 1.0f); // Cor magenta para bloco de plástico
-            break;
-        case LIXEIRA_PAPEL:
-            glColor3f(0.0f, 0.0f, 1.0f); // Cor azul para lixeira de papel
-            break;
-        case LIXEIRA_PLASTICO:
-            glColor3f(1.0f, 0.0f, 0.0f); // Cor vermelha para lixeira de plástico
-            break;
-        default:
-            glColor3f(0.0f, 0.0f, 0.0f); // Cor preta para tipos desconhecidos
-            break;
+        case PISO: glColor3f(0.8f, 0.8f, 0.8f); break; // Cinza para piso
+        case PAREDE: glColor3f(0.5f, 0.5f, 0.5f); break; // Cinza escuro para parede
+        case BLOCO_PAPEL: glColor3f(0.9f, 0.9f, 1.0f); break; // Azul claro para bloco de papel
+        case BLOCO_PLASTICO: glColor3f(1.0f, 0.7f, 0.7f); break; // Vermelho claro para bloco de plástico
+        case LIXEIRA_PAPEL: glColor3f(0.0f, 0.0f, 0.8f); break; // Azul escuro para lixeira de papel
+        case LIXEIRA_PLASTICO: glColor3f(0.8f, 0.0f, 0.0f); break; // Vermelho escuro para lixeira de plástico
+        default: glColor3f(0.0f, 0.0f, 0.0f); break; // Cor preta para tipos desconhecidos
     }
-    // Desenha um retangulo representando a célula
     glBegin(GL_QUADS);
         glVertex2f(x, y);
         glVertex2f(x + cellWidth, y);
@@ -190,34 +287,33 @@ void desenhaCena() {
         }
     }
 
-    //  Desenha todas as paredes, pisos e lixeiras a partir do mapaInicial
+     // Desenha todas as paredes a partir do mapaInicial
     for(int i = 0; i < MAP_WIDTH; i++){
         for(int j = 0; j < MAP_HEIGHT; j++){
-            int cell = nivel.mapaInicial[i][j];
-            if(cell == PAREDE){
+            if(nivel.mapaInicial[i][j] == PAREDE){
                 desenhaCelula(i, j, PAREDE); // Desenha paredes
-            }
-            else if(cell == LIXEIRA_PAPEL){
-                desenhaCelula(i, j, LIXEIRA_PAPEL); // Desenha lixeiras de papel
-            }
-            else if(cell == LIXEIRA_PLASTICO){
-                desenhaCelula(i, j, LIXEIRA_PLASTICO); // Desenha lixeiras de plástico
-            }
-            else {
-                desenhaCelula(i, j, PISO); // Desenha piso como padrão
             }
         }
     }
+
+    // Desenha as lixeiras
+    for (int i = 0; i < nivel.numLixeiras; i++) {
+        int lixeiraX = nivel.lixeiras[i].x;
+        int lixeiraY = nivel.lixeiras[i].y;
+        // Determina o tipo de lixeira para passar para desenhaCelula
+        int tipoDesenhoLixeira = (nivel.lixeiras[i].tipo == PAPEL) ? LIXEIRA_PAPEL : LIXEIRA_PLASTICO;
+        desenhaCelula(lixeiraX, lixeiraY, tipoDesenhoLixeira);
+    }
+
     // Desenha blocos, verificando se estão sobre a lixeira correta
     for(int i = 0; i < nivel.numBlocos; i++) {
         int x = nivel.blocos[i].x;
         int y = nivel.blocos[i].y;
         int tipo = nivel.blocos[i].tipo;
         int lixeiraIndex = indiceLixeira(x, y);
-       if(lixeiraIndex != -1 && nivel.lixeiras[lixeiraIndex].tipo == tipo) {
-        desenhaBlocoEntregue(x, y, tipo);
-        } else {
-            // Desenha o bloco normalmente 
+    // Só desenha o bloco se ele NÃO estiver na lixeira correta
+        // A lixeira correta já terá a textura "cheia"
+        if(lixeiraIndex == -1 || nivel.lixeiras[lixeiraIndex].tipo != tipo) {
             if(tipo == PAPEL)
                 desenhaCelula(x, y, BLOCO_PAPEL);
             else if(tipo == PLASTICO)

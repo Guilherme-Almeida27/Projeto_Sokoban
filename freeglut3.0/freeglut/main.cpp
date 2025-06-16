@@ -126,6 +126,7 @@ int main(int argc, char** argv){
     carregaTexturaParede(); // Carrega a textura da parede
     carregaTexturaPlayer(); // Carrega as texturas do jogador
     carregaTexturaPiso(); // Carrega a textura do piso
+    carregaTexturaItens(); // Carrega as texturas dos itens (blocos e lixeiras)
     initLevel(); // Inicializa o nível
 
     // Callbacks do GLUT
