@@ -6,6 +6,10 @@
 
 Level nivel; // Variável global para armazenar o nível atual
 
+extern int direcaoPlayer; // 0=cima, 1=baixo, 2=esquerda, 3=direita
+extern int framePlayer; // 0=andando_01, 1=parado, 2=andando_02
+extern int contadorAnim; // Contador de animação para o jogador
+
 // ---------------------------Funções de configuração inicial---------------------------
 
 
@@ -200,6 +204,21 @@ void movePlayer(int dx, int dy) {
         // Se não há bloco, apenas move o jogador
         nivel.jogador.x = novoX;
         nivel.jogador.y = novoY;
+    }
+
+    // Atualiza direção
+    if(dx == 0 && dy == -1) direcaoPlayer = 0; // cima
+    else if(dx == 0 && dy == 1) direcaoPlayer = 1; // baixo
+    else if(dx == -1 && dy == 0) direcaoPlayer = 2; // esquerda
+    else if(dx == 1 && dy == 0) direcaoPlayer = 3; // direita
+
+    // Avança frame de animação
+    contadorAnim++;
+    if(contadorAnim >= 2) { // Troca de frame a cada 2 movimentos (ajuste se quiser mais rápido/lento)
+        framePlayer = (framePlayer + 1) % 4;
+        // Ciclo: 0=andando_01, 1=parado, 2=andando_02, 3=parado
+        if(framePlayer == 3) framePlayer = 1; // Sempre volta para parado após andando_02
+        contadorAnim = 0;
     }
     glutPostRedisplay(); // Redesenha a cena após mover o jogador
 }

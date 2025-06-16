@@ -5,8 +5,13 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-GLuint texturaParede = 0;
+GLuint texturaParede = 0; // Textura para as paredes
 
+// Texturas do jogador: [direção][frame]: 0=andando_01, 1=parado, 2=andando_02
+GLuint texturaPlayer[4][3] = {0}; // [direção][frame]: 0=andando_01, 1=parado, 2=andando_02
+int direcaoPlayer = 2; // 0=cima, 1=baixo, 2=esquerda, 3=direita
+int framePlayer = 1;   // 0=andando_01, 1=parado, 2=andando_02
+int contadorAnim = 0;  // Para controlar a troca de frame
 
 // Dimensões da janela em pixels
 static int windowWidth = 800; 
@@ -102,13 +107,23 @@ void desenhaCelula(int x, int y, int tipo){
 
 // Função para desenhar o jogador(apenas um retangulo por enquanto)
 void desenhaPlayer(int x, int y) {
-    glColor3f(1.0f, 0.5f, 0.0f); // Cor laranja para o jogador
+    int frame = framePlayer;
+    glEnable(GL_BLEND); // Habilita o blending para transparência
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Configura o modo de blending
+    if(frame > 2) frame = 1; // Garante que só usa 0, 1, 2.
+    GLuint tex = texturaPlayer[direcaoPlayer][frame]; // Seleciona a textura do jogador com base na direção e frame
+    glEnable(GL_TEXTURE_2D); // Habilita o uso de texturas
+    glBindTexture(GL_TEXTURE_2D, tex); // Vincula a textura do jogador
+    glColor4f(1,1,1,1);
+    // Desenha um quadrado representando o jogador
     glBegin(GL_QUADS);
-        glVertex2f(x, y);
-        glVertex2f(x + cellWidth, y);
-        glVertex2f(x + cellWidth, y + cellHeight);
-        glVertex2f(x, y + cellHeight);
+        glTexCoord2f(0.0f, 0.0f); glVertex2f(x, y);
+        glTexCoord2f(1.0f, 0.0f); glVertex2f(x + 1, y);
+        glTexCoord2f(1.0f, 1.0f); glVertex2f(x + 1, y + 1);
+        glTexCoord2f(0.0f, 1.0f); glVertex2f(x, y + 1);
     glEnd();
+    glDisable(GL_TEXTURE_2D); // Desabilita o uso de texturas
+    glDisable(GL_BLEND); // Desabilita o blending
 }
 
 // Função para desenhar o texto usando uma função utilitária
@@ -136,7 +151,6 @@ void desenhaBlocoEntregue(int x, int y, int tipo) {
         glVertex2f(x + margem, y + 1 - margem);
     glEnd();
 }
-
 
 // Função para desenhar a cena(mapa inteiro + blocos + lixeiras + jogador)
 void desenhaCena() {
@@ -185,3 +199,26 @@ void desenhaCena() {
     desenhaPlayer(nivel.jogador.x, nivel.jogador.y);
 }
 
+// Função para carregar as texturas do jogador
+void carregaTexturasPlayer() {
+    const char* nomes[4][3] = {
+        {"img/Sprites_Player/Andando_Atras_01.png", "img/Sprites_Player/Parado_Atras.png", "img/Sprites_Player/Andando_Atras_02.png"},
+        {"img/Sprites_Player/Andando_Frente_01.png", "img/Sprites_Player/Parado_Frente.png", "img/Sprites_Player/Andando_Frente_02.png"},
+        {"img/Sprites_Player/Andando_Esquerda_01.png", "img/Sprites_Player/Parado_Esquerda.png", "img/Sprites_Player/Andando_Esquerda_02.png"},
+        {"img/Sprites_Player/Andando_Direita_01.png", "img/Sprites_Player/Parado_Direita.png", "img/Sprites_Player/Andando_Direita_02.png"}
+    };
+    for(int dir=0; dir<4; dir++) {
+        for(int f=0; f<3; f++) {
+            int w, h, c;
+            unsigned char* dados = stbi_load(nomes[dir][f], &w, &h, &c, 4);
+            if(dados) {
+                glGenTextures(1, &texturaPlayer[dir][f]);
+                glBindTexture(GL_TEXTURE_2D, texturaPlayer[dir][f]);
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, dados);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                stbi_image_free(dados);
+            }
+        }
+    }
+}

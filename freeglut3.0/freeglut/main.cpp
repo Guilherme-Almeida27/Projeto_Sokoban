@@ -123,6 +123,7 @@ int main(int argc, char** argv){
     MapaInicial(); // Cria o mapa inicial do nível
     initRender(WINDOW_WIDTH, WINDOW_HEIGHT); // Inicializa a renderização
     carregaTexturaParede(); // Carrega a textura da parede
+    carregaTexturasPlayer(); // Carrega as texturas do jogador
     initLevel(); // Inicializa o nível
 
     // Callbacks do GLUT
