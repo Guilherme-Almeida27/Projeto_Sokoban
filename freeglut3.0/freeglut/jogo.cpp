@@ -12,7 +12,7 @@ extern int contadorAnim; // Contador de animação para o jogador
 
 // Variáveis globais para controle de níveis
 int nivelAtual = 1;
-const int totalNiveis = 3; 
+const int totalNiveis = 4; 
 
 // ---------------------------Funções de configuração inicial---------------------------
 
@@ -55,6 +55,17 @@ void MapaInicial(int indiceNivel) {
             {1,0,0,0,0,1},
             {1,1,0,0,9,1},
             {0,1,1,1,1,1}
+        };
+        memcpy(nivel.mapaInicial, tmp, sizeof(tmp));
+    }
+    else if(indiceNivel == 4){ // Nível 4 
+        int tmp[MAP_WIDTH][MAP_HEIGHT] = {
+            {0,0,1,1,1,1,0},
+            {1,1,9,0,0,1,1},
+            {1,0,0,5,2,0,1},
+            {1,0,3,4,0,0,1},
+            {1,1,1,0,0,1,1},
+            {0,0,1,1,1,1,0}
         };
         memcpy(nivel.mapaInicial, tmp, sizeof(tmp));
     }

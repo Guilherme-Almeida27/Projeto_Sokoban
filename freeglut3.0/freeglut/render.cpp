@@ -35,11 +35,11 @@ void initRender(int width, int height) {
     windowWidth = width;
     windowHeight = height;
 
-    glMatrixMode(GL_PROJECTION);
+    glMatrixMode(GL_PROJECTION); // Define a matriz de projeção
     glLoadIdentity();
     gluOrtho2D(0.0, MAP_WIDTH, MAP_HEIGHT, 0.0); // Projeção de (0,0) no canto inferior esquerdo até (MAP_WIDTH, MAP_HEIGHT) no canto superior direito  
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW); // Define a matriz de modelo/visão
+    glLoadIdentity(); 
     glViewport(0, 0, windowWidth, windowHeight); // Define a viewport para toda a janela
 
 }
