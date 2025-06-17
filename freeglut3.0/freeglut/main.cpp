@@ -146,7 +146,7 @@ void display() {
     if(estadoJogo == MENU_INICIAL) {
         // Menu inicial simples
         glColor3f(0.0f, 0.0f, 0.0f); // Cor preta para o texto
-        desenhaTexto("Sokoban Coleta Seletiva", WINDOW_WIDTH / 2 - 150, WINDOW_HEIGHT / 2 + 60);
+        desenhaTexto("PROJETO SOKOBIN", WINDOW_WIDTH / 2 - 150, WINDOW_HEIGHT / 2 + 60);
         desenhaTexto("Pressione ENTER para Iniciar", WINDOW_WIDTH / 2 - 150, WINDOW_HEIGHT / 2 + 20);
         desenhaTexto("Pressione ESC para Sair", WINDOW_WIDTH / 2 - 150, WINDOW_HEIGHT / 2 - 20);
         desenhaTexto("Clique com o botao direito para mais opcoes.", WINDOW_WIDTH / 2 - 200, WINDOW_HEIGHT / 2 - 60);
@@ -202,7 +202,7 @@ int main(int argc, char** argv){
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); // Configura o modo de exibição
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT); // Define o tamanho da janela
     glutInitWindowPosition(100, 100); // Define a posição da janela na tela
-    glutCreateWindow("Sokobon Coleta Seletica(nome temporario)"); // Cria a janela com o título
+    glutCreateWindow("PROJETO SOKOBIN"); // Cria a janela com o título
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Define a cor de fundo como branca
 
 
