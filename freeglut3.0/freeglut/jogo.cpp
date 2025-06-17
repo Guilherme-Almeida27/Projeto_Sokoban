@@ -11,8 +11,8 @@ extern int framePlayer; // 0=andando_01, 1=parado, 2=andando_02
 extern int contadorAnim; // Contador de animação para o jogador
 
 // Variáveis globais para controle de níveis
-static int nivelAtual = 1;
-static const int totalNiveis = 3; 
+int nivelAtual = 1;
+const int totalNiveis = 3; 
 
 // ---------------------------Funções de configuração inicial---------------------------
 

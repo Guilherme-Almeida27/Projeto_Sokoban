@@ -252,8 +252,56 @@ void desenhaPlayer(int x, int y) {
 
 // Função para desenhar o texto usando uma função utilitária
 void desenhaTexto(const char* texto, int x, int y) {
-    glColor3f(0.0f, 0.0f, 0.0f); // Cor preta para o texto
+    // Salvar estado atual das matrizes e atributos
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix(); // Salva a matriz de projeção atual
+    glLoadIdentity(); // Reseta a matriz de projeção
+    // Configura uma projeção ortográfica para corresponder às coordenadas da janela
+    // (0,0) no canto inferior esquerdo, (windowWidth, windowHeight) no canto superior direito
+    gluOrtho2D(0.0, windowWidth, 0.0, windowHeight);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix(); // Salva a matriz de modelview atual
+    glLoadIdentity(); // Reseta a matriz de modelview
+
+    // Desabilitar estados que podem interferir no desenho do texto 2D
+    GLboolean textureEnabled;
+    glGetBooleanv(GL_TEXTURE_2D, &textureEnabled);
+    if (textureEnabled) {
+        glDisable(GL_TEXTURE_2D);
+    }
+
+    GLboolean depthTestEnabled;
+    glGetBooleanv(GL_DEPTH_TEST, &depthTestEnabled);
+    if (depthTestEnabled) {
+        glDisable(GL_DEPTH_TEST);
+    }
+
+    GLboolean lightingEnabled;
+    glGetBooleanv(GL_LIGHTING, &lightingEnabled);
+    if (lightingEnabled) {
+        glDisable(GL_LIGHTING);
+    }
+
+    // A cor do texto deve ser definida ANTES de chamar esta função.
+    // A linha original glColor3f(0.0f, 0.0f, 0.0f); foi removida.
     BitmapText(texto, x, y, GLUT_BITMAP_HELVETICA_18); // Desenha o texto na posição especificada
+
+    // Restaurar estados anteriores
+    if (textureEnabled) {
+        glEnable(GL_TEXTURE_2D);
+    }
+    if (depthTestEnabled) {
+        glEnable(GL_DEPTH_TEST);
+    }
+    if (lightingEnabled) {
+        glEnable(GL_LIGHTING);
+    }
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix(); // Restaura a matriz de projeção anterior
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix(); // Restaura a matriz de modelview anterior
 }
 
 

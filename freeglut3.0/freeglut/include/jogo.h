@@ -14,11 +14,13 @@
 #define LIXEIRA_PAPEL 4
 #define LIXEIRA_PLASTICO 5
 
-#define JOGADOR 9 
+#define JOGADOR 9
 
 //Novos tipos simplificados para blocos e lixeiras
 #define PAPEL 2
 #define PLASTICO 3
+
+extern int nivelAtual; // Nível atual do jogo
 
 typedef struct { 
     int x, y; // Posição do jogador no mapa
