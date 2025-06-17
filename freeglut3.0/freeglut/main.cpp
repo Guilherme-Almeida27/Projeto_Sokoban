@@ -1,3 +1,8 @@
+// Criado por: Guilherme José Almeida Nunes e Anderson André Ferreira Gomes
+// Disciplina: Computação Gráfica
+// Descrição: Jogo Sokoban com temática de coleta seletiva em C++ usando OpenGL e FreeGLUT
+// Compilação Makefile: makefile ou mingw32-make
+
 #include <stdlib.h>
 #include <GL/freeglut.h>
 #include "jogo.h"
