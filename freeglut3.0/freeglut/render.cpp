@@ -304,26 +304,6 @@ void desenhaTexto(const char* texto, int x, int y) {
     glPopMatrix(); // Restaura a matriz de modelview anterior
 }
 
-
-// Adicione esta função auxiliar para desenhar um bloco "entregue"
-void desenhaBlocoEntregue(int x, int y, int tipo) {
-    // Exemplo: desenha um bloco menor e com cor diferente
-    float margem = 0.2f; // Margem para deixar o bloco menor
-    if(tipo == PAPEL)
-        glColor3f(0.7f, 0.7f, 1.0f); // Azul claro para papel entregue
-    else if(tipo == PLASTICO)
-        glColor3f(1.0f, 0.7f, 0.7f); // Vermelho claro para plástico entregue
-    else
-        glColor3f(0.7f, 0.7f, 0.7f); // Cinza claro para outros
-
-    glBegin(GL_QUADS);
-        glVertex2f(x + margem, y + margem);
-        glVertex2f(x + 1 - margem, y + margem);
-        glVertex2f(x + 1 - margem, y + 1 - margem);
-        glVertex2f(x + margem, y + 1 - margem);
-    glEnd();
-}
-
 // Função para desenhar a cena(mapa inteiro + blocos + lixeiras + jogador)
 void desenhaCena() {
     glClear(GL_COLOR_BUFFER_BIT); // Limpa o buffer de cor

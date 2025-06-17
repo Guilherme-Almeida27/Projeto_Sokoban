@@ -3,8 +3,8 @@
 
 #include <GL/freeglut.h>
 
-#define MAP_WIDTH 20 // Largura do mapa
-#define MAP_HEIGHT 20 // Altura do mapa
+#define MAP_WIDTH 18 // Largura do mapa
+#define MAP_HEIGHT 18 // Altura do mapa
 
 // Definições de tipos de blocos
 #define PISO 0
