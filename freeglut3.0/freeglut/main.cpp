@@ -4,6 +4,7 @@
 // Compilação Makefile: makefile ou mingw32-make
 
 #include <stdlib.h>
+#include <string.h>
 #include <GL/freeglut.h>
 #include "jogo.h"
 #include "render.h"
@@ -21,6 +22,7 @@ const int WINDOW_HEIGHT = 600; // Altura da janela
 #define PAUSADO 3
 int estadoJogo = MENU_INICIAL;
 extern int nivelAtual; // Nível atual do jogo
+extern Level nivel;
 
 // Menu GLUT
 void menu_principal(int option) {
@@ -152,8 +154,11 @@ void display() {
         desenhaTexto("Clique com o botao direito para mais opcoes.", WINDOW_WIDTH / 2 - 200, WINDOW_HEIGHT / 2 - 60);
     } 
     else if(estadoJogo == JOGANDO) {
+        char passos_str[10];
+        snprintf(passos_str, 10,("%s%d"), "PASSOS:", nivel.passos); 
         // Desenha a cena do jogo
         desenhaCena(); // Desenha o mapa, blocos e jogador
+        desenhaTexto(passos_str, WINDOW_WIDTH - 150, WINDOW_HEIGHT - 20);
         int vitoriaStatus = checkVitoria(); // Verifica se o jogador venceu o nível
         if(vitoriaStatus == 2) {
             estadoJogo = VITORIA_JOGO; // Muda para estado de vitória do jogo
@@ -213,7 +218,7 @@ int main(int argc, char** argv){
     carregaTexturaPlayer(); // Carrega as texturas do jogador
     carregaTexturaPiso(); // Carrega a textura do piso
     carregaTexturaItens(); // Carrega as texturas dos itens (blocos e lixeiras)
-    //initLevel(); // Inicializa o nível
+    initLevel(); // Inicializa o nível
 
     // Callbacks do GLUT
     glutDisplayFunc(display); // Define a função de exibição

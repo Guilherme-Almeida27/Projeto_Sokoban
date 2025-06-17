@@ -65,6 +65,7 @@ void initLevel(){
     memcpy(nivel.mapaAtual, nivel.mapaInicial, sizeof(nivel.mapaInicial));
     nivel.numBlocos = 0;
     nivel.numLixeiras = 0;
+    nivel.passos = 0;
 
     //  Varre o mapa e armazena blocos e lixeiras numa lista, e remove-os do mapaAtual
     for(int y = 0; y < MAP_HEIGHT; y++) {
@@ -217,6 +218,8 @@ void movePlayer(int dx, int dy) {
         nivel.jogador.x = novoX;
         nivel.jogador.y = novoY;
     }
+
+    nivel.passos++; //Incrementa os passos
 
     // Atualiza direção
     if(dx == 0 && dy == -1) direcaoPlayer = 0; // cima

@@ -45,6 +45,7 @@ typedef struct {
     Lixeira lixeiras[20];
     int numBlocos; // Número de blocos no nível
     int numLixeiras; // Número de lixeiras no nível
+    int passos; //Número de passos do jogador no nível
 } Level;
 
 extern Level level; // Variável global para armazenar o level
